@@ -1,26 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import {connect} from "react-redux";
+import ChessBoard from "./components/ChessBoard";
+import {createUseStyles} from "react-jss";
+import {selectPiece} from "./actions/selectPiece";
+import {deselectPiece} from "./actions/deselectPiece";
+import {makeMove} from "./actions/makeMove";
 
-function App() {
+const useStyles = createUseStyles({
+  app: {
+    minWidth: "800px",
+    minHeight: "600px",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center"
+  }
+});
+
+function App(props) {
+  const styles = useStyles();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={styles.app}>
+      <ChessBoard {...props} />
     </div>
   );
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    chess: state.chess.chess,
+    selectedCell: state.chess.selectedCell
+  };
+};
+const mapDispatchToProps = {
+  selectPiece: selectPiece,
+  deselectPiece: deselectPiece,
+  makeMove: makeMove
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

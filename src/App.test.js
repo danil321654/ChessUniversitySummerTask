@@ -1,9 +1,19 @@
-import React from 'react';
-import { render } from '@testing-library/react';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom";
+import {render} from "@testing-library/react";
+import {Provider} from "react-redux";
+import App from "./App";
+import {store} from "./store";
 
-test('renders learn react link', () => {
-  const { getByText } = render(<App />);
-  const linkElement = getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+describe("App", () => {
+  it("renders without crashing", () => {
+    const div = document.createElement("div");
+    ReactDOM.render(
+      <Provider store={store}>
+        <App />
+      </Provider>,
+      div
+    );
+    div.remove();
+  });
 });
