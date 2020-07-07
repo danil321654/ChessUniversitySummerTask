@@ -10,6 +10,9 @@ const useStyles = createUseStyles({
   },
   selected: {
     border: "5px solid green"
+  },
+  possibleMove: {
+    border: "5px solid red"
   }
 });
 
@@ -20,12 +23,16 @@ function ChessCell(props) {
     if (props.figure)
       return props.selected
         ? props.deselectPiece(props.cellId)
-        : props.selectPiece(props.cellId);
+        : props.selectPiece({cellId: props.cellId, figure: props.figure});
     return;
   };
   return (
     <div
-      className={styles.cell + (props.selected ? " " + styles.selected : "")}
+      className={
+        styles.cell +
+        (props.selected ? " " + styles.selected : "") +
+        (props.possibleMove ? " " + styles.possibleMove : "")
+      }
       style={{backgroundColor: props.color}}
       onClick={handleClick}
     >

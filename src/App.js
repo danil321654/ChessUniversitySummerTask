@@ -29,7 +29,8 @@ function App(props) {
 const mapStateToProps = state => {
   return {
     chess: state.chess.chess,
-    selectedCell: state.chess.selectedCell
+    selectedCell: state.chess.selectedCell,
+    possibleMoves: state.chess.possibleMoves
   };
 };
 const mapDispatchToProps = {

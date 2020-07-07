@@ -1,4 +1,5 @@
-export const selectPiece = cellId => ({
+export const selectPiece = ({cellId, figure}) => ({
   type: "SELECT_PIECE",
-  cellId: cellId
+  cellId: cellId,
+  figure: figure
 });

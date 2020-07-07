@@ -1,9 +1,9 @@
+import {chars} from "./../constants/chars";
 export const fillBoard = () => {
   let chessboard = [];
   for (let i = 0; i < 8; i++) {
     chessboard.push([]);
     for (let j = 0; j < 8; j++) {
-      let chars = ["a", "b", "c", "d", "e", "f", "g", "h"];
       let cellId = chars[j] + (8 - i).toString();
       let figure;
       switch (cellId) {
@@ -58,6 +58,5 @@ export const fillBoard = () => {
       });
     }
   }
-
   return chessboard;
 };

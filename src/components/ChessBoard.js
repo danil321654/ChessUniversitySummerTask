@@ -19,6 +19,7 @@ function ChessBoard(props) {
         {...cell}
         selectPiece={props.selectPiece}
         deselectPiece={props.deselectPiece}
+        possibleMove={props.possibleMoves.includes(cell.cellId)}
         selected={props.selectedCell === cell.cellId}
       />
     ))
