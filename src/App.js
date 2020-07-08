@@ -4,7 +4,7 @@ import ChessBoard from "./components/ChessBoard";
 import {createUseStyles} from "react-jss";
 import {selectPiece} from "./actions/selectPiece";
 import {deselectPiece} from "./actions/deselectPiece";
-import {makeMove} from "./actions/makeMove";
+import {movePiece} from "./actions/movePiece";
 
 const useStyles = createUseStyles({
   app: {
@@ -30,13 +30,13 @@ const mapStateToProps = state => {
   return {
     chess: state.chess.chess,
     selectedCell: state.chess.selectedCell,
-    possibleMoves: state.chess.possibleMoves
+    selectedPossibleMoves: state.chess.selectedPossibleMoves
   };
 };
 const mapDispatchToProps = {
   selectPiece: selectPiece,
   deselectPiece: deselectPiece,
-  makeMove: makeMove
+  movePiece: movePiece
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

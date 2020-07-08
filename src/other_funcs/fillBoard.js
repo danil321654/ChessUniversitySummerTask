@@ -48,13 +48,13 @@ export const fillBoard = () => {
           break;
       }
       if (cellId.match(/[a-h]2/))
-        figure = figure = {piece: "Pawn", color: "white"};
+        figure = figure = {piece: "Pawn", color: "white", moved: false};
       if (cellId.match(/[a-h]7/))
-        figure = figure = {piece: "Pawn", color: "black"};
+        figure = figure = {piece: "Pawn", color: "black", moved: false};
       chessboard[i].push({
         cellId: cellId,
-        color: (j + i) % 2 !== 0 ? "brown" : "lightblue",
-        figure: figure
+        color: (j + i) % 2 !== 0 ? "rgba(70, 44, 23, 0.93)" : "rgb(136, 100, 61)",
+        figure: figure ? {...figure, cellId: cellId} : figure
       });
     }
   }

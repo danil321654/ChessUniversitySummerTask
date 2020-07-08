@@ -1,12 +1,14 @@
-let initialBoard = {whiteTeam: fillBoard(), blackTeam: "none"};
+let initialState = {
+  whiteTeam: [fillBoard().filter],
+  blackTeam: [],
+  allPossibleMoves: [],
+  check: false
+};
 
-export const chessBoardReducer = (state = initialBoard, action) => {
+export const moveReducer = (state = initialBoard, action) => {
   switch (action.type) {
-    case "SELECT_PIECE":
-      return {...state, selectedCell: action.cellId};
-      break;
-    case "DESELECT_PIECE":
-      return {...state, selectedCell: "none"};
+    case "MOVE_PIECE":
+      return state;
       break;
     default:
       return state;
