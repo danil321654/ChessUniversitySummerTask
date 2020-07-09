@@ -1,4 +1,5 @@
-export const movePiece = cellId => ({
+export const movePiece = ({cellId, beat}) => ({
   type: "MOVE_PIECE",
-  cellId: cellId
+  cellId: cellId,
+  beat: beat
 });

@@ -20,6 +20,9 @@ const useStyles = createUseStyles({
   },
   possibleBeat: {
     border: "5px solid red"
+  },
+  checked: {
+    border: "5px solid gray"
   }
 });
 
@@ -27,11 +30,16 @@ function ChessCell(props) {
   const styles = useStyles();
   const handleClick = () => {
     console.log(props);
-    if (props.figure)
-      return props.selected
-        ? props.deselectPiece(props.cellId)
-        : props.selectPiece({cellId: props.cellId, figure: props.figure});
-    if (props.selectedPossibleMove) return props.movePiece(props.cellId);
+    if (props.selectedPossibleBeat)
+      props.movePiece({cellId: props.cellId, beat: true});
+    else if (props.selectedPossibleMove)
+      return props.movePiece({cellId: props.cellId, beat: false});
+    else if (props.figure) {
+      if (props.figure.color == props.curTeamMove)
+        return props.selected
+          ? props.deselectPiece(props.cellId)
+          : props.selectPiece({cellId: props.cellId, figure: props.figure});
+    }
     return;
   };
   return (
@@ -40,7 +48,8 @@ function ChessCell(props) {
         styles.cell +
         (props.selected ? " " + styles.selected : "") +
         (props.selectedPossibleMove ? " " + styles.possibleMove : "") +
-        (props.selectedPossibleBeat ? " " + styles.possibleBeat : "")
+        (props.selectedPossibleBeat ? " " + styles.possibleBeat : "") +
+        (props.checked ? " " + styles.checked : "") 
       }
       style={{backgroundColor: props.color}}
       onClick={handleClick}
