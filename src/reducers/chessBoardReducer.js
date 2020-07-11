@@ -1,5 +1,6 @@
 import {fillBoard} from "./../other_funcs/fillBoard.js";
 import {findPossibleMoves} from "./../other_funcs/findPossibleMoves.js";
+import {withoutChecked} from "./../other_funcs/withoutChecked.js";
 import {chars} from "./../constants/chars";
 
 let initialBoard = {
@@ -21,41 +22,62 @@ let initialBoard = {
     .flat(1),
   selectedPossibleMoves: [],
   curTeamMove: "white",
-  check: undefined
+  check: undefined,
+  mate: false
 };
 initialBoard = {
   ...initialBoard,
   allWhitePossibleMoves: initialBoard.whiteTeam.map(el => {
     return {
+      figure: el,
       cellId: el.cellId,
-      possibleMoves: findPossibleMoves(el, el.cellId, initialBoard.chess)
+      possibleMoves: findPossibleMoves(el, el.cellId, initialBoard)
     };
   }),
   allBlackPossibleMoves: initialBoard.blackTeam.map(el => {
     return {
+      figure: el,
       cellId: el.cellId,
-      possibleMoves: findPossibleMoves(el, el.cellId, initialBoard.chess)
+      possibleMoves: findPossibleMoves(el, el.cellId, initialBoard)
     };
   })
 };
 
-export const chessBoardReducer = (state = initialBoard, action) => {
+export const chessBoardReducer = (
+  state = localStorage.getItem("state")
+    ? JSON.parse(localStorage.getItem("state"))
+    : initialBoard,
+  action
+) => {
   console.log("state", state);
+  if (action.type == "RESTART_GAME") return initialBoard;
+  if (state.mate) return state;
+  let selected = state.selectedCell;
   switch (action.type) {
     case "SELECT_PIECE":
-      return {
+      let ns = {
         ...state,
-        selectedCell: action.cellId,
-        selectedPossibleMoves: findPossibleMoves(
-          action.figure,
-          action.cellId,
-          state.chess
-        )
+        selectedCell: action.cellId
       };
-      break;
+      ns = {
+        ...ns,
+        selectedPossibleMoves: withoutChecked({
+          possibleMoves: findPossibleMoves(action.figure, action.cellId, {
+            ...ns
+          }),
+          state: {...ns}
+        })
+      };
+      localStorage.setItem("state", JSON.stringify(ns));
+      return ns;
     case "DESELECT_PIECE":
-      return {...state, selectedCell: "none", selectedPossibleMoves: []};
-      break;
+      let deselectState = {
+        ...state,
+        selectedCell: "none",
+        selectedPossibleMoves: []
+      };
+      localStorage.setItem("state", JSON.stringify(deselectState));
+      return deselectState;
 
     case "MOVE_PIECE":
       let movedPiece;
@@ -79,6 +101,7 @@ export const chessBoardReducer = (state = initialBoard, action) => {
           ),
           selectedPossibleMoves: []
         };
+      console.log("state2", movedState);
       movedState = {
         ...movedState,
         chess: movedState.chess.map(row =>
@@ -91,18 +114,19 @@ export const chessBoardReducer = (state = initialBoard, action) => {
         ),
         whiteTeam: movedState.whiteTeam.map(el =>
           el.cellId == movedState.selectedCell
-            ? {...el, cellId: action.cellId}
+            ? {...el, cellId: action.cellId, moved: true}
             : el
         ),
         blackTeam: movedState.blackTeam.map(el =>
           el.cellId == movedState.selectedCell
-            ? {...el, cellId: action.cellId}
+            ? {...el, cellId: action.cellId, moved: true}
             : el
         ),
         selectedPossibleMoves: [],
         selectedCell: "none",
         curTeamMove: curTeamMove
       };
+      console.log("state3", movedState);
       movedState = {
         ...movedState,
         chess: movedState.chess.map(row =>
@@ -113,12 +137,20 @@ export const chessBoardReducer = (state = initialBoard, action) => {
           )
         )
       };
+      console.log("selqwe", selected);
+      console.log("state4", movedState);
       movedState = {
         ...movedState,
         allWhitePossibleMoves: movedState.whiteTeam.map(el => {
+          console.log("beatab", findPossibleMoves(el, el.cellId, movedState));
           return {
+            figure: el,
             cellId: el.cellId,
-            possibleMoves: findPossibleMoves(el, el.cellId, movedState.chess)
+            beat: el.possibleBeat,
+            possibleMoves: withoutChecked({
+              possibleMoves: findPossibleMoves(el, el.cellId, movedState),
+              state: {...movedState, selectedCell: selected}
+            })
           };
         })
       };
@@ -127,15 +159,19 @@ export const chessBoardReducer = (state = initialBoard, action) => {
         ...movedState,
         allBlackPossibleMoves: movedState.blackTeam.map(el => {
           return {
+            figure: el,
             cellId: el.cellId,
-            possibleMoves: findPossibleMoves(el, el.cellId, movedState.chess)
+            beat: el.possibleBeat,
+            possibleMoves: withoutChecked({
+              possibleMoves: findPossibleMoves(el, el.cellId, movedState),
+              state: {...movedState, selectedCell: selected}
+            })
           };
         })
       };
       let check = undefined;
       movedState.allWhitePossibleMoves.map(cell => {
         cell.possibleMoves.map(possibleMove => {
-          console.log(possibleMove);
           if (
             possibleMove.possibleBeat &&
             movedState.chess[8 - +possibleMove.cellId[1]][
@@ -143,18 +179,14 @@ export const chessBoardReducer = (state = initialBoard, action) => {
             ].figure.piece == "King"
           )
             check = "black";
-          console.log(
-            movedState.chess[8 - possibleMove.cellId[1]][
-              chars.indexOf(possibleMove.cellId[0])
-            ]
-          );
+
           return possibleMove;
         });
         return cell;
       });
       movedState.allBlackPossibleMoves.map(cell => {
         cell.possibleMoves.map(possibleMove => {
-        //  console.log(possibleMove);
+          //  console.log(possibleMove);
           if (
             possibleMove.possibleBeat &&
             movedState.chess[8 - +possibleMove.cellId[1]][
@@ -165,9 +197,20 @@ export const chessBoardReducer = (state = initialBoard, action) => {
           return possibleMove;
         });
         return cell;
+        console.log("state5", movedState);
       });
-      console.log("movedState", movedState);
-      return {...movedState, check: check};
+      movedState = {...movedState, check: check};
+      movedState =
+        (movedState.check == "white" &&
+          movedState.allWhitePossibleMoves.map(x => x.possibleMoves).flat(1)
+            .length == 0) ||
+        (movedState.check == "black" &&
+          movedState.allBlackPossibleMoves.map(x => x.possibleMoves).flat(1)
+            .length == 0)
+          ? {...movedState, mate: true}
+          : movedState;
+      localStorage.setItem("state", JSON.stringify(movedState));
+      return movedState;
       break;
 
     default:

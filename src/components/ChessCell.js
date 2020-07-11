@@ -29,9 +29,8 @@ const useStyles = createUseStyles({
 function ChessCell(props) {
   const styles = useStyles();
   const handleClick = () => {
-    console.log(props);
-    if (props.selectedPossibleBeat)
-      props.movePiece({cellId: props.cellId, beat: true});
+    if (props.selectedPossibleBeat )
+      return props.movePiece({cellId: props.cellId, beat: true});
     else if (props.selectedPossibleMove)
       return props.movePiece({cellId: props.cellId, beat: false});
     else if (props.figure) {
@@ -49,7 +48,7 @@ function ChessCell(props) {
         (props.selected ? " " + styles.selected : "") +
         (props.selectedPossibleMove ? " " + styles.possibleMove : "") +
         (props.selectedPossibleBeat ? " " + styles.possibleBeat : "") +
-        (props.checked ? " " + styles.checked : "") 
+        (props.checked ? " " + styles.checked : "")
       }
       style={{backgroundColor: props.color}}
       onClick={handleClick}

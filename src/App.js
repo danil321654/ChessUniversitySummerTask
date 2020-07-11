@@ -2,6 +2,8 @@ import React, {useLayoutEffect, useState} from "react";
 import {connect} from "react-redux";
 import ChessBoard from "./components/ChessBoard";
 import {createUseStyles} from "react-jss";
+import {Button} from "@material-ui/core";
+import {Link} from "react-router-dom";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import fontawesome from "@fortawesome/fontawesome";
@@ -10,7 +12,7 @@ import {fas} from "@fortawesome/free-solid-svg-icons";
 import {selectPiece} from "./actions/selectPiece";
 import {deselectPiece} from "./actions/deselectPiece";
 import {movePiece} from "./actions/movePiece";
-import {beatPiece} from "./actions/beatPiece";
+import {restart} from "./actions/restart";
 
 function useWindowSize() {
   const [size, setSize] = useState([0, 0]);
@@ -59,22 +61,63 @@ const useStyles = createUseStyles({
   decorativeFiguresPawn: {
     fontSize: "12rem",
     transform: "rotate(20deg)"
+  },
+
+  restart: {
+    fontSize: "3rem"
+  },
+  toSettingsButton: {
+    fontSize: "6vh !important",
+    fontWeight: "900 !important",
+    position: "absolute !important",
+    right: "0 !important",
+    top: "5% !important",
+    width: "1rem",
+    opacity: "50%"
   }
 });
 
 function App(props) {
   const [width, height] = useWindowSize();
   const styles = useStyles();
+  console.log("propess", props);
   return (
-    <div className={styles.app} style={{backgroundColor: props.themeColor}}>
-      <div className={styles.bigLabel} style={{color: !props.check
-        ? props.curTeamMove : props.check}}>
+    <div
+      className={styles.app}
+      style={{
+        backgroundColor: props.mate ? props.theme.mate : props.theme.background
+      }}
+    >
+      <Link to="/Settings">
+        {" "}
+        <Button classes={{root: styles.toSettingsButton}}>
+          S E T T I N G S
+        </Button>
+      </Link>
+      <div
+        className={styles.bigLabel}
+        style={{
+          color: !props.check
+            ? props.curTeamMove
+            : props.mate
+            ? props.theme.mateText
+            : props.check
+        }}
+      >
         {!props.check
           ? props.curTeamMove + " team move"
-          : props.check + " check!!"}
+          : props.mate
+          ? props.check + " mate"
+          : props.check + " check!!"}{" "}
+        <FontAwesomeIcon
+          className={styles.restart}
+          onClick={props.restart}
+          icon={fas.faRedo}
+          color={props.theme.mateText}
+        />
       </div>
       <div className={styles.chessWithIconConatiner}>
-        {width > 870 ? (
+        {width > 950 ? (
           <div>
             <FontAwesomeIcon
               className={styles.decorativeFiguresKing}
@@ -88,6 +131,7 @@ function App(props) {
         ) : (
           ""
         )}
+        <div></div>
         <ChessBoard {...props} />
       </div>
     </div>
@@ -101,14 +145,17 @@ const mapStateToProps = state => {
     selectedPossibleMoves: state.chess.selectedPossibleMoves,
     curTeamMove: state.chess.curTeamMove,
     check: state.chess.check,
-    themeColor: state.display.themeColor
+    allPossibleWhiteMoves: state.chess.allPossibleWhiteMoves,
+    allPossibleBlackMoves: state.chess.allPossibleBlackMoves,
+    theme: state.display.theme,
+    mate: state.chess.mate
   };
 };
 const mapDispatchToProps = {
   selectPiece: selectPiece,
   deselectPiece: deselectPiece,
   movePiece: movePiece,
-  beatPiece: beatPiece
+  restart: restart
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
