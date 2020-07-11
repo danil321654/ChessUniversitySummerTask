@@ -4,7 +4,17 @@ import {createUseStyles} from "react-jss";
 import {Button} from "@material-ui/core";
 import {Link} from "react-router-dom";
 
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import fontawesome from "@fortawesome/fontawesome";
+import {fas} from "@fortawesome/free-solid-svg-icons";
+import {far} from "@fortawesome/free-regular-svg-icons";
+
 import {changeTheme} from "./../actions/changeTheme";
+import {saveGame} from "./../actions/saveGame";
+import {loadGame} from "./../actions/loadGame";
+import {deleteSave} from "./../actions/deleteSave";
+
+fontawesome.library.add(fas, far);
 
 const useStyles = createUseStyles({
   settings: {
@@ -33,8 +43,10 @@ const useStyles = createUseStyles({
 });
 
 function Settings(props) {
+  const [textColor, changeColor] = useState(
+    props.theme.name == "light" ? "black" : "lightgray"
+  );
   const styles = useStyles();
-  console.log("Settings", props);
   return (
     <div
       className={styles.settings}
@@ -55,14 +67,42 @@ function Settings(props) {
         settings
       </div>
       <div>
-        <Button onClick={() => props.changeTheme(props.theme.name)}>
+        <Button
+          onClick={() => {
+            changeColor(props.theme.name == "light" ? "lightgray" : "black");
+            props.changeTheme(props.theme.name);
+          }}
+        >
           {" "}
-          {props.theme.name}
+          {
+            <FontAwesomeIcon
+              icon={
+                props.theme.name == "light" ? far.faLightbulb : fas.faLightbulb
+              }
+              color={textColor}
+              className={styles.bigLabel}
+            />
+          }
         </Button>
       </div>
       <div>
-        <Button> save</Button>
-        <Button> load</Button>
+        <Button onClick={props.saveGame}>
+          <FontAwesomeIcon icon={fas.faSave} color={textColor} />{" "}
+        </Button>
+        {props.saved ? (
+          <Button onClick={props.loadGame}>
+            {" "}
+            <FontAwesomeIcon icon={fas.faUpload} color={textColor} />
+          </Button>
+        ) : (
+          <Button onClick={props.loadGame} disabled>
+            {" "}
+            <FontAwesomeIcon icon={fas.faUpload} color={'rgba(122, 116, 113, 0.4)'} />{" "}
+          </Button>
+        )}
+        <Button onClick={props.deleteSave}>
+          <FontAwesomeIcon icon={fas.faTrashAlt} color={textColor} />{" "}
+        </Button>
       </div>
     </div>
   );
@@ -70,11 +110,15 @@ function Settings(props) {
 
 const mapStateToProps = state => {
   return {
-    theme: state.display.theme
+    theme: state.display.theme,
+    saved: state.display.saved
   };
 };
 const mapDispatchToProps = {
-  changeTheme: changeTheme
+  changeTheme: changeTheme,
+  saveGame: saveGame,
+  loadGame: loadGame,
+  deleteSave: deleteSave
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);

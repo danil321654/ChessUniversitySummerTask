@@ -12,7 +12,7 @@ import {fas} from "@fortawesome/free-solid-svg-icons";
 import {selectPiece} from "./actions/selectPiece";
 import {deselectPiece} from "./actions/deselectPiece";
 import {movePiece} from "./actions/movePiece";
-import {restart} from "./actions/restart";
+import {restartGame} from "./actions/restartGame";
 
 function useWindowSize() {
   const [size, setSize] = useState([0, 0]);
@@ -64,7 +64,9 @@ const useStyles = createUseStyles({
   },
 
   restart: {
-    fontSize: "3rem"
+    fontSize: "3rem",
+    width: '3rem',
+    height: '4rem'
   },
   toSettingsButton: {
     fontSize: "6vh !important",
@@ -80,7 +82,6 @@ const useStyles = createUseStyles({
 function App(props) {
   const [width, height] = useWindowSize();
   const styles = useStyles();
-  console.log("propess", props);
   return (
     <div
       className={styles.app}
@@ -109,12 +110,14 @@ function App(props) {
           : props.mate
           ? props.check + " mate"
           : props.check + " check!!"}{" "}
-        <FontAwesomeIcon
-          className={styles.restart}
-          onClick={props.restart}
-          icon={fas.faRedo}
-          color={props.theme.mateText}
-        />
+        <Button classes={{root: styles.restart}}>
+          <FontAwesomeIcon
+            className={styles.restart}
+            onClick={props.restartGame}
+            icon={fas.faRedo}
+            color={props.theme.mateText}
+          />
+        </Button>
       </div>
       <div className={styles.chessWithIconConatiner}>
         {width > 950 ? (
@@ -155,7 +158,7 @@ const mapDispatchToProps = {
   selectPiece: selectPiece,
   deselectPiece: deselectPiece,
   movePiece: movePiece,
-  restart: restart
+  restartGame: restartGame
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

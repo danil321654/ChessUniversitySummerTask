@@ -14,18 +14,40 @@ let darkTheme = {
     mateText: "rgb(91, 6, 54)"
   }
 };
-export const settingsAndDisplayReducer = (state = lightTheme, action) => {
+export const settingsAndDisplayReducer = (
+  state = localStorage.getItem("SettingsState")
+    ? JSON.parse(localStorage.getItem("SettingsState"))
+    : lightTheme,
+  action
+) => {
   switch (action.type) {
     case "CHANGE_THEME":
-      console.log(action);
       let newTheme =
         action.theme == "light"
           ? darkTheme
           : action.theme == "dark"
           ? lightTheme
           : state.theme;
+      newTheme = {...state, ...newTheme};
+      localStorage.setItem("SettingsState", JSON.stringify(newTheme));
       return newTheme;
       break;
+
+    case "SAVE_GAME":
+      let save = JSON.parse(localStorage.getItem("state"));
+      localStorage.setItem("customSave", JSON.stringify(save));
+      let savedState = {...state, saved: true};
+      localStorage.setItem("SettingsState", JSON.stringify(savedState));
+      return savedState;
+      break;
+
+    case "DELETE_SAVE":
+      localStorage.removeItem("customSave");
+      let unsavedState = {...state, saved: false};
+      localStorage.setItem("SettingsState", JSON.stringify(unsavedState));
+      return unsavedState;
+      break;
+
     default:
       return state;
   }

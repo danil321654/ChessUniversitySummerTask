@@ -3,7 +3,6 @@ import {findPossibleMoves} from "./../other_funcs/findPossibleMoves.js";
 import {chars} from "./../constants/chars";
 
 export const simulateMove = (movedState, action) => {
-  console.log("wh", action);
   let movedPiece = action.figure;
   let curTeamMove = movedState.curTeamMove == "white" ? "black" : "white";
   if (action.beat)
@@ -81,7 +80,6 @@ export const simulateMove = (movedState, action) => {
       };
     })
   };
-  console.log("chengedmobedState", movedState);
   let check = undefined;
   movedState.allWhitePossibleMoves.map(cell => {
     cell.possibleMoves.map(possibleMove => {
@@ -110,6 +108,5 @@ export const simulateMove = (movedState, action) => {
     return cell;
   });
   movedState = {...movedState, check: check};
-  console.log(action, "simulate", movedState);
   return {...movedState, selectedCell: "none"};
 };

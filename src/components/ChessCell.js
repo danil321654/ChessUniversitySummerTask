@@ -4,13 +4,15 @@ import ChessPiece from "./ChessPiece";
 
 const useStyles = createUseStyles({
   cell: {
+    zIndex: '0',
     boxSizing: "border-box",
     width: "100%",
     height: "100%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    fontSize: "2rem"
+    fontSize: "2rem",
+    boxShadow: "5px -7px 15px 0px rgba(103, 94, 67, 0.7);"
   },
   selected: {
     border: "5px solid green"

@@ -49,11 +49,19 @@ export const chessBoardReducer = (
     : initialBoard,
   action
 ) => {
-  console.log("state", state);
   if (action.type == "RESTART_GAME") return initialBoard;
   if (state.mate) return state;
   let selected = state.selectedCell;
   switch (action.type) {
+    case "LOAD_GAME":
+      if (JSON.parse(localStorage.getItem("customSave"))) {
+        let loadedSave = JSON.parse(localStorage.getItem("customSave"));
+        localStorage.setItem("state", JSON.stringify(loadedSave));
+
+        return loadedSave;
+      }
+      return state;
+      break;
     case "SELECT_PIECE":
       let ns = {
         ...state,
@@ -101,7 +109,6 @@ export const chessBoardReducer = (
           ),
           selectedPossibleMoves: []
         };
-      console.log("state2", movedState);
       movedState = {
         ...movedState,
         chess: movedState.chess.map(row =>
@@ -126,7 +133,6 @@ export const chessBoardReducer = (
         selectedCell: "none",
         curTeamMove: curTeamMove
       };
-      console.log("state3", movedState);
       movedState = {
         ...movedState,
         chess: movedState.chess.map(row =>
@@ -137,12 +143,9 @@ export const chessBoardReducer = (
           )
         )
       };
-      console.log("selqwe", selected);
-      console.log("state4", movedState);
       movedState = {
         ...movedState,
         allWhitePossibleMoves: movedState.whiteTeam.map(el => {
-          console.log("beatab", findPossibleMoves(el, el.cellId, movedState));
           return {
             figure: el,
             cellId: el.cellId,
@@ -186,7 +189,6 @@ export const chessBoardReducer = (
       });
       movedState.allBlackPossibleMoves.map(cell => {
         cell.possibleMoves.map(possibleMove => {
-          //  console.log(possibleMove);
           if (
             possibleMove.possibleBeat &&
             movedState.chess[8 - +possibleMove.cellId[1]][
@@ -197,7 +199,6 @@ export const chessBoardReducer = (
           return possibleMove;
         });
         return cell;
-        console.log("state5", movedState);
       });
       movedState = {...movedState, check: check};
       movedState =
