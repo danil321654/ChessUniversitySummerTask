@@ -108,7 +108,7 @@ function App(props) {
         {!props.check
           ? props.curTeamMove + " team move"
           : props.mate
-          ? props.check + " mate"
+          ? props.check + " checkmate"
           : props.check + " check!!"}{" "}
         <Button classes={{root: styles.restart}}>
           <FontAwesomeIcon

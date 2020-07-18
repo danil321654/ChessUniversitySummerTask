@@ -25,7 +25,11 @@ const useStyles = createUseStyles({
 
 function ChessLabelCell(props) {
   const styles = useStyles();
-  return <div className={styles[props.position]}>{props.label}</div>;
+  return (
+    <div className={styles[props.position]} style={{color: props.color}}>
+      {props.label}
+    </div>
+  );
 }
 
 export default ChessLabelCell;

@@ -49,7 +49,10 @@ export const chessBoardReducer = (
     : initialBoard,
   action
 ) => {
-  if (action.type == "RESTART_GAME") return initialBoard;
+  if (action.type == "RESTART_GAME") {
+    localStorage.setItem("state", JSON.stringify(initialBoard));
+    return initialBoard;
+  }
   if (state.mate) return state;
   let selected = state.selectedCell;
   switch (action.type) {
@@ -114,19 +117,26 @@ export const chessBoardReducer = (
         chess: movedState.chess.map(row =>
           row.map(el => {
             if (el.cellId == movedState.selectedCell) {
-              movedPiece = el.figure;
+              movedPiece = {
+                ...el.figure,
+                piece:
+                  el.figure.piece === "Pawn" &&
+                  (+action.cellId[1] === 1 || +action.cellId[1] === 8)
+                    ? "Queen"
+                    : el.figure.piece
+              };
               return {...el, figure: undefined};
             } else return el;
           })
         ),
         whiteTeam: movedState.whiteTeam.map(el =>
           el.cellId == movedState.selectedCell
-            ? {...el, cellId: action.cellId, moved: true}
+            ? {...movedPiece, cellId: action.cellId, moved: true}
             : el
         ),
         blackTeam: movedState.blackTeam.map(el =>
           el.cellId == movedState.selectedCell
-            ? {...el, cellId: action.cellId, moved: true}
+            ? {...movedPiece, cellId: action.cellId, moved: true}
             : el
         ),
         selectedPossibleMoves: [],

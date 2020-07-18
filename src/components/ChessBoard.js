@@ -56,7 +56,12 @@ function ChessBoard(props) {
           curTeamMove={props.curTeamMove}
         />
       ) : (
-        <ChessLabelCell key={idx} label={cell.label} position={cell.position} />
+        <ChessLabelCell
+          key={idx}
+          label={cell.label}
+          position={cell.position}
+          color={props.theme.name === "light" ? "black" : "white"}
+        />
       )
     )
   );

@@ -523,7 +523,6 @@ export const findPossibleMoves = (figure, cellId, state) => {
           possibleBeat: false
         });
       }
-      console.log("queenqwe", possibleQueenMoves);
       possibleMoves = possibleQueenMoves;
       break;
     default:

@@ -27,7 +27,14 @@ export const simulateMove = (movedState, action) => {
       )
     )
   };
-  movedPiece = action.figure;
+  movedPiece = {
+    ...action.figure,
+    piece:
+      action.figure.piece === "Pawn" &&
+      (+action.cellId[1] === 1 || +action.cellId[1] === 8)
+        ? "Queen"
+        : action.figure.piece
+  };
   movedState = {
     ...movedState,
     whiteTeam: movedState.whiteTeam.map(el =>
